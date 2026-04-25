@@ -1,6 +1,6 @@
 # Epic 01 — Foundation & Authentication
 
-**Status:** drafted
+**Status:** in-progress (01.0 done 2026-04-26; 01.1 ready, James can pick up next)
 **Owner:** Tushar (solo dev)
 **Depends on:** (none — this is the foundation)
 **Unblocks:** all subsequent epics
@@ -47,21 +47,22 @@ This epic also establishes the **application shell** — the layout, navigation,
 **So that** every subsequent Epic 01+ story can focus on feature work, not setup.
 
 **Acceptance criteria:** (full list in `stories/01.0-project-bootstrap.md`)
-- [ ] AC-1: `npm run dev` boots; `/` renders a placeholder landing without errors.
-- [ ] AC-2: `lint`, `typecheck`, `test`, `test:e2e` all exit 0 on the empty scaffold.
-- [ ] AC-3: `prisma validate` + `generate` succeed against an empty schema with `DATABASE_URL` + `DIRECT_URL` wired.
-- [ ] AC-4: shadcn/ui initialized + design tokens from front-end-spec §3 wired in `globals.css` + `tailwind.config.ts`.
-- [ ] AC-5: Sonner `<Toaster />` mounted in root layout.
-- [ ] AC-6: Folder structure matches ADR-0008 (empty folders carry `.gitkeep`).
-- [ ] AC-7: ESLint enforces `lib/finance/*` purity rule from ADR-0008.
-- [ ] AC-8: `.env.example` enumerates every var from architecture.md §7.
-- [ ] AC-9: Single `chore: bootstrap Next.js project (Story 01.0)` commit on `main`; `.gitignore` correct.
-- [ ] AC-10: README has Getting Started + stub Supabase-setup section for 01.1 to fill in.
+- [x] AC-1: `npm run dev` boots; `/` renders a placeholder landing without errors.
+- [x] AC-2: `lint`, `typecheck`, `test`, `test:e2e` all exit 0 on the empty scaffold.
+- [x] AC-3: `prisma validate` + `generate` succeed (with one throwaway `BootstrapPlaceholder` model — Prisma 5 hard-errors on zero-model schemas; see Story 01.0 dev notes deviation #4. Story 01.1 deletes the placeholder when adding `User`).
+- [x] AC-4: shadcn/ui initialized + design tokens from front-end-spec §3 wired in `globals.css` + `tailwind.config.ts`.
+- [x] AC-5: Sonner `<Toaster />` mounted in root layout.
+- [x] AC-6: Folder structure matches ADR-0008 (empty folders carry `.gitkeep`).
+- [x] AC-7: ESLint enforces `lib/finance/*` purity rule from ADR-0008. (Promoted to a permanent test at `tests/unit/eslint-rules.test.ts` instead of one-shot fixture — closes the regression gap Sarah flagged.)
+- [x] AC-8: `.env.example` enumerates every var from architecture.md §7.
+- [x] AC-9: Bootstrap commit `chore: bootstrap Next.js project (Story 01.0)` on `main` (commit 9bf57f3, sitting on top of pre-existing `Initial commit` per Tushar's relaxed AC-9). `.gitignore` correct.
+- [x] AC-10: README has Getting Started + stub Supabase-setup section for 01.1 to fill in.
 
 **Dependencies:** none
-**Status:** ready
+**Status:** done (shipped 2026-04-26, commit 9bf57f3)
 **Readiness notes (PO):** Marked ready 2026-04-24 by Sarah. AC-3 + bootstrap step 6 refined during review to clarify that Prisma's CLI loads env vars from `.env` (not `.env.local`), so a gitignored `.env` with placeholder values must exist for `prisma generate` to run offline. Accepted risks: ESLint rule verified once then fixture deleted (no CI regression catch); Toaster proof is manual-visual. Full attestation in `stories/01.0-project-bootstrap.md`.
 **Why this exists:** Inserted 2026-04-24 after James flagged that Story 01.1 presupposed a Next.js scaffold that did not exist. Splitting bootstrap out keeps 01.1 a pure auth story. See `stories/01.0-project-bootstrap.md` and `stories/01.1-google-oauth-signup.md` Dev notes (2026-04-24, James).
+**Ship notes (Dev):** James shipped 2026-04-26. Three deviations from Sarah's 19 literal steps (CNA + shadcn init authored by hand due to sandbox 45s timeout; AC-7 promoted to permanent test; lint script switched to `eslint .` for Next 15 flat-config compatibility) plus one schema correction (`BootstrapPlaceholder` model required to satisfy Prisma 5's "no zero-model schemas" rule). Full ship report in `stories/01.0-project-bootstrap.md` Dev notes.
 
 ### Story 01.1 — Google OAuth sign-in
 **As a** user
@@ -76,9 +77,10 @@ This epic also establishes the **application shell** — the layout, navigation,
 - [ ] AC-5: A subsequent visit while session is valid goes directly to dashboard, not to login.
 - [ ] AC-6: Integration test: after OAuth signup, `SELECT id FROM public.users` returns the same uuid as `auth.uid()` in a Postgres session — this proves RLS will work in Story 01.5.
 
-**Dependencies:** 01.0 (bootstrap — added 2026-04-24)
-**Status:** needs-changes (paused 2026-04-24 pending 01.0; story body otherwise still ready — will flip back to `ready` once 01.0 ships)
+**Dependencies:** 01.0 (bootstrap — shipped 2026-04-26)
+**Status:** ready (unblocked 2026-04-26 once 01.0 shipped)
 **Readiness notes (PO):** Marked ready 2026-04-24 by Sarah. Bob — the id-mirroring pattern is the single most important thing in this story's context. Do not let Prisma default a uuid; `User.id` has no `@default` and must be set from `auth.users.id` on upsert.
+**Pre-flight reminder for James (2026-04-26):** When you add `User` + `UserSettings` in this story's first migration, that same migration must DROP the `BootstrapPlaceholder` table 01.0 left behind. The schema.prisma comment block flags it inline; don't skip it.
 
 ### Story 01.2 — Magic link sign-in
 **As a** user
