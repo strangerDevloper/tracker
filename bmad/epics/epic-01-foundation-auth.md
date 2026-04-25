@@ -4,7 +4,7 @@
 **Owner:** Tushar (solo dev)
 **Depends on:** (none — this is the foundation)
 **Unblocks:** all subsequent epics
-**Estimated duration:** ~1 week
+**Estimated duration:** ~1 week (+ ~½ day for Story 01.0 bootstrap added 2026-04-24)
 
 ---
 
@@ -41,6 +41,28 @@ This epic also establishes the **application shell** — the layout, navigation,
 
 ## User stories
 
+### Story 01.0 — Project bootstrap
+**As a** developer
+**I want** a conventional Next.js 15 App Router scaffold with TS strict, Tailwind, Prisma, shadcn/ui, design tokens, and a test harness arranged per ADR-0008
+**So that** every subsequent Epic 01+ story can focus on feature work, not setup.
+
+**Acceptance criteria:** (full list in `stories/01.0-project-bootstrap.md`)
+- [ ] AC-1: `npm run dev` boots; `/` renders a placeholder landing without errors.
+- [ ] AC-2: `lint`, `typecheck`, `test`, `test:e2e` all exit 0 on the empty scaffold.
+- [ ] AC-3: `prisma validate` + `generate` succeed against an empty schema with `DATABASE_URL` + `DIRECT_URL` wired.
+- [ ] AC-4: shadcn/ui initialized + design tokens from front-end-spec §3 wired in `globals.css` + `tailwind.config.ts`.
+- [ ] AC-5: Sonner `<Toaster />` mounted in root layout.
+- [ ] AC-6: Folder structure matches ADR-0008 (empty folders carry `.gitkeep`).
+- [ ] AC-7: ESLint enforces `lib/finance/*` purity rule from ADR-0008.
+- [ ] AC-8: `.env.example` enumerates every var from architecture.md §7.
+- [ ] AC-9: Single `chore: bootstrap Next.js project (Story 01.0)` commit on `main`; `.gitignore` correct.
+- [ ] AC-10: README has Getting Started + stub Supabase-setup section for 01.1 to fill in.
+
+**Dependencies:** none
+**Status:** ready
+**Readiness notes (PO):** Marked ready 2026-04-24 by Sarah. AC-3 + bootstrap step 6 refined during review to clarify that Prisma's CLI loads env vars from `.env` (not `.env.local`), so a gitignored `.env` with placeholder values must exist for `prisma generate` to run offline. Accepted risks: ESLint rule verified once then fixture deleted (no CI regression catch); Toaster proof is manual-visual. Full attestation in `stories/01.0-project-bootstrap.md`.
+**Why this exists:** Inserted 2026-04-24 after James flagged that Story 01.1 presupposed a Next.js scaffold that did not exist. Splitting bootstrap out keeps 01.1 a pure auth story. See `stories/01.0-project-bootstrap.md` and `stories/01.1-google-oauth-signup.md` Dev notes (2026-04-24, James).
+
 ### Story 01.1 — Google OAuth sign-in
 **As a** user
 **I want** to sign in with my Google account
@@ -54,8 +76,8 @@ This epic also establishes the **application shell** — the layout, navigation,
 - [ ] AC-5: A subsequent visit while session is valid goes directly to dashboard, not to login.
 - [ ] AC-6: Integration test: after OAuth signup, `SELECT id FROM public.users` returns the same uuid as `auth.uid()` in a Postgres session — this proves RLS will work in Story 01.5.
 
-**Dependencies:** none
-**Status:** ready
+**Dependencies:** 01.0 (bootstrap — added 2026-04-24)
+**Status:** needs-changes (paused 2026-04-24 pending 01.0; story body otherwise still ready — will flip back to `ready` once 01.0 ships)
 **Readiness notes (PO):** Marked ready 2026-04-24 by Sarah. Bob — the id-mirroring pattern is the single most important thing in this story's context. Do not let Prisma default a uuid; `User.id` has no `@default` and must be set from `auth.users.id` on upsert.
 
 ### Story 01.2 — Magic link sign-in

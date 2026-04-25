@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme — HSL triplets (no hsl() wrapper; Tailwind wraps). */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    --primary: 222 47% 11%;
+    --primary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 222 47% 11%;
+
+    /* Finance semantics */
+    --expense: 0 72% 51%;
+    --income: 142 71% 45%;
+    --warn: 38 92% 50%;
+    --danger: 0 84% 60%;
+
+    /* Radii */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-full: 9999px;
+  }
+
+  [data-theme="dark"],
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 47% 11%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 210 40% 98%;
+
+    --expense: 0 72% 60%;
+    --income: 142 71% 55%;
+    --warn: 38 92% 60%;
+    --danger: 0 84% 65%;
+  }
+
+  html,
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  /* Tabular numerals — critical for finance figures aligning across rows. */
+  body {
+    font-feature-settings: "tnum" 1, "cv11" 1;
+  }
+}

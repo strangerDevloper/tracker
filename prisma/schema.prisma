@@ -1,0 +1,27 @@
+// Personal Tracker — Prisma schema
+// Bootstrap scope (Story 01.0): generator + datasource + a single throwaway
+// model so `prisma generate` produces a client (Prisma 5 errors out on a
+// zero-model schema). Real models land in subsequent stories:
+//   • Story 01.1 — User, UserSettings (DELETE BootstrapPlaceholder when adding these)
+//   • Epic 02   — Account
+//   • Epic 03   — Transaction, Category
+//   • Epic 04   — PriceQuote, Holding
+//
+// JAMES (next story): the first model you add must be accompanied by deleting
+// BootstrapPlaceholder in the same migration. Do not leave it in the DB.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+/// Throwaway model so `prisma generate` succeeds during 01.0 bootstrap.
+/// Delete me when Story 01.1 adds the first real model (User).
+model BootstrapPlaceholder {
+  id Int @id @default(autoincrement())
+}
